@@ -32,12 +32,12 @@
       },
       "runtime" : {
          "requires" : {
-            "Format::PrintUtils" : "0",
+            "Data::PrintUtils" : "0",
             "Getopt::CommandLineExports" : "0",
             "Test::More" : "0"
          }
       }
    },
    "release_status" : "stable",
-   "version" : "0.01"
+   "version" : "0.02"
 }

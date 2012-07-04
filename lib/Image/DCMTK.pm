@@ -12,11 +12,11 @@ Image::DCMTK - Interface to the DCMTK Dicom Toolkit
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 
 =head1 SYNOPSIS
@@ -44,7 +44,7 @@ BEGIN {
     use Exporter ();
     our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 # set the version for version checking
-    $VERSION = 0.01;
+    $VERSION = 0.02;
     @ISA = qw(Exporter);
     @EXPORT_OK = qw();
     %EXPORT_TAGS = ( ); # eg: TAG => [ qw!name1 name2! ],
@@ -6159,6 +6159,11 @@ my %cmdLines = (
 
 =head2 returnTagAsXML
 
+Return an XML formatted string version of a given DICOM tag
+
+You may use either a Group and Element type tag or a DICOM Dictionary Common Name (PatientID for example)
+
+This function really just calls open/closeXMLSequence open/closeXMLItem or makeXMLElement as needed
 
 =cut
 
@@ -6187,6 +6192,7 @@ sub returnTagAsXML
 
 =head2 makeXMLElement
 
+Return an XML formatted string version of a given "normal" DICOM tag (not a Item or a Sequence structure)
 
 =cut
 
@@ -6220,6 +6226,7 @@ sub makeXMLElement
 
 =head2 openXMLItem
 
+Return an XML formatted string of the DICOM "Open Item" tag
 
 =cut
 
@@ -6235,6 +6242,7 @@ sub openXMLItem
 
 =head2 closeXMLItem
 
+Return an XML formatted string of the DICOM "Close Item" tag
 
 =cut
 
@@ -6246,6 +6254,7 @@ sub closeXMLItem
 
 =head2 openXMLSequence
 
+Return an XML formatted string of an DICOM "Open Sequence" tag
 
 =cut
 
@@ -6267,6 +6276,7 @@ sub openXMLSequence
 
 =head2 closeXMLSequence
 
+Return an XML formatted string of an DICOM "Close Sequence" tag
 
 =cut
 

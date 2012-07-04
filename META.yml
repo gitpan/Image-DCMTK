@@ -18,7 +18,7 @@ no_index:
     - t
     - inc
 requires:
-  Format::PrintUtils: 0
+  Data::PrintUtils: 0
   Getopt::CommandLineExports: 0
   Test::More: 0
-version: 0.01
+version: 0.02

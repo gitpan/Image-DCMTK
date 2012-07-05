@@ -21,4 +21,4 @@ requires:
   Data::PrintUtils: 0
   Getopt::CommandLineExports: 0
   Test::More: 0
-version: 0.02
+version: 0.03

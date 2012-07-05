@@ -12,11 +12,11 @@ Image::DCMTK - Interface to the DCMTK Dicom Toolkit
 
 =head1 VERSION
 
-Version 0.02
+Version 0.03
 
 =cut
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 
 =head1 SYNOPSIS
@@ -44,7 +44,7 @@ BEGIN {
     use Exporter ();
     our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 # set the version for version checking
-    $VERSION = 0.02;
+    $VERSION = 0.03;
     @ISA = qw(Exporter);
     @EXPORT_OK = qw();
     %EXPORT_TAGS = ( ); # eg: TAG => [ qw!name1 name2! ],
@@ -6108,34 +6108,44 @@ our %dcmtkDicomDictionary = (
 );
 
 our %reverseDicomDictionary;
-
-while (my ($dcm_dict_name, $entryref) = each %dcmtk360DicomDictionary) {
-    my $key = $entryref->{GRP} . $entryref->{ELEM};
-    my $valRef = {DCM_DICT_NAME => $dcm_dict_name, VR => $entryref->{VR} };
-    if (defined $Image::DCMTK::reverseDicomDictionary{$key} )
+sub import
+{
+    my @ExporterList = ();
+    my %h;
+    while (my $x = shift)
     {
-        #duplicate keys, prefer unadorned to "ACR_NEMA" to "RETIRED"
-        if ($dcm_dict_name =~ m/^RETIRED/)
+        push @ExporterList, $x unless $x =~ m/ADDITIONAL_TAGS/;
+        $h{ADDITIONAL_TAGS} = shift if $x =~ m/ADDITIONAL_TAGS/;
+    }
+    %dcmtk360DicomDictionary = (%dcmtk360DicomDictionary, %{$h{ADDITIONAL_TAGS}}) if defined $h{ADDITIONAL_TAGS};    
+    while (my ($dcm_dict_name, $entryref) = each %dcmtk360DicomDictionary) {
+        my $key = $entryref->{GRP} . $entryref->{ELEM};
+        my $valRef = {DCM_DICT_NAME => $dcm_dict_name, VR => $entryref->{VR} };
+        if (defined $Image::DCMTK::reverseDicomDictionary{$key} )
         {
-            # can't be prefered
-        }
-        elsif ($dcm_dict_name =~ m/^ACR_NEMA/)
-        {
-            # only beats RETIRED
-            $Image::DCMTK::reverseDicomDictionary{$key} = $valRef if $Image::DCMTK::reverseDicomDictionary{$key}->{ DCM_DICT_NAME } =~ m/^RETIRED/;
+            #duplicate keys, prefer unadorned to "ACR_NEMA" to "RETIRED"
+            if ($dcm_dict_name =~ m/^RETIRED/)
+            {
+                # can't be prefered
+            }
+            elsif ($dcm_dict_name =~ m/^ACR_NEMA/)
+            {
+                # only beats RETIRED
+                $Image::DCMTK::reverseDicomDictionary{$key} = $valRef if $Image::DCMTK::reverseDicomDictionary{$key}->{ DCM_DICT_NAME } =~ m/^RETIRED/;
+            }
+            else
+            {
+                # always wins, hope it isn't colliding with another tag
+                $Image::DCMTK::reverseDicomDictionary{$key} = $valRef;
+            }
         }
         else
         {
-            # always wins, hope it isn't colliding with another tag
             $Image::DCMTK::reverseDicomDictionary{$key} = $valRef;
         }
-    }
-    else
-    {
-        $Image::DCMTK::reverseDicomDictionary{$key} = $valRef;
-    }
-};
-
+    };
+    Image::DCMTK->export_to_level(1, @ExporterList); 
+}
 
 # exported package globals go here
 

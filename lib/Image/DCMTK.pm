@@ -12,11 +12,11 @@ Image::DCMTK - Interface to the DCMTK Dicom Toolkit
 
 =head1 VERSION
 
-Version 0.03
+Version 0.04
 
 =cut
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 
 =head1 SYNOPSIS
@@ -44,7 +44,7 @@ BEGIN {
     use Exporter ();
     our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 # set the version for version checking
-    $VERSION = 0.03;
+    $VERSION = 0.04;
     @ISA = qw(Exporter);
     @EXPORT_OK = qw();
     %EXPORT_TAGS = ( ); # eg: TAG => [ qw!name1 name2! ],
@@ -6117,8 +6117,8 @@ sub import
         push @ExporterList, $x unless $x =~ m/ADDITIONAL_TAGS/;
         $h{ADDITIONAL_TAGS} = shift if $x =~ m/ADDITIONAL_TAGS/;
     }
-    %dcmtk360DicomDictionary = (%dcmtk360DicomDictionary, %{$h{ADDITIONAL_TAGS}}) if defined $h{ADDITIONAL_TAGS};    
-    while (my ($dcm_dict_name, $entryref) = each %dcmtk360DicomDictionary) {
+    %dcmtkDicomDictionary = (%dcmtkDicomDictionary, %{$h{ADDITIONAL_TAGS}}) if defined $h{ADDITIONAL_TAGS};    
+    while (my ($dcm_dict_name, $entryref) = each %dcmtkDicomDictionary) {
         my $key = $entryref->{GRP} . $entryref->{ELEM};
         my $valRef = {DCM_DICT_NAME => $dcm_dict_name, VR => $entryref->{VR} };
         if (defined $Image::DCMTK::reverseDicomDictionary{$key} )

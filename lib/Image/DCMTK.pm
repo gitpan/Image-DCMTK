@@ -5,6 +5,9 @@ use strict;
 use warnings;
 use Data::PrintUtils qw(:ALL);
 use Getopt::CommandLineExports qw(:ALL);
+use XML::Simple;
+use IO::All;
+
 
 =head1 NAME
 
@@ -12,11 +15,11 @@ Image::DCMTK - Interface to the DCMTK Dicom Toolkit
 
 =head1 VERSION
 
-Version 0.04
+Version 0.05
 
 =cut
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 
 =head1 SYNOPSIS
@@ -44,7 +47,6 @@ BEGIN {
     use Exporter ();
     our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 # set the version for version checking
-    $VERSION = 0.04;
     @ISA = qw(Exporter);
     @EXPORT_OK = qw();
     %EXPORT_TAGS = ( ); # eg: TAG => [ qw!name1 name2! ],
@@ -6165,7 +6167,25 @@ my %cmdLines = (
     parseDCMXMLDumpForSequences        => [qw/DCM_DUMP=s@ REGULAR_EXPRESSION=s DCM_SEQUENCES_REQUESTED=s@/],
     parseDCMXMLDumpForTagLists         => [qw/DCM_DUMP=s@ REGULAR_EXPRESSION=s DCM_TAGS_REQUESTED=s@/],
     modifyAnImage                   => [qw/SOURCE_FILENAME=s DESTINATION_FILENAME=s TAG_CHANGE_LINE=s/],
+    openDicomFile                   => [qw/DCM_FILENAME=s/],
 );
+
+=head2 openDicomFile
+
+Read a Dicom File and generate a Dicom object
+
+=cut
+
+sub openDicomFile
+{
+    my %h = (
+        DCM_FILENAME => undef,
+        (   parseArgs \@_, @{$Image::DCMTK::cmdLines{openDicomFile}}),
+    );
+    my $dump = io("dcm2xml $h{DCM_FILENAME}")->pipe;
+    my $dicomHash = XML::Simple::XMLin($dump, SuppressEmpty => undef);
+    return $dicomHash;
+}
 
 =head2 returnTagAsXML
 
